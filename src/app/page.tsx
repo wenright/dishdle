@@ -1,10 +1,10 @@
 'use client';
 
-import Image from "next/image";
 import { dsvFormat, DSVRowString } from "d3-dsv";
 import { useEffect, useState } from "react";
 
 import Map from "@/components/map";
+import { GeographyProps } from "react-simple-maps";
 
 export default function Home() {
   const [foodData, setFoodData] = useState<DSVRowString>();
@@ -20,17 +20,23 @@ export default function Home() {
     });
   }, []);
   
+  const onStateClick = (geo: GeographyProps) => {
+    console.log(foodData?.region);
+    console.log(geo);
+  }
+  
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div>
         {foodData &&
-          <div className="">
-            <h1>{foodData.name}</h1>
-            <p>{foodData.description}</p>
-            <p>{foodData.region} - {foodData.state}</p>
+          <div className="flex flex-col justify-center text-center">
+            <p className="text-4xl mb-4">{foodData.name}</p>
+            <img src={"food/" + foodData.image} alt="" />
+            <p className="text-lg my-4">{foodData.description}</p>
+            {/* <p>{foodData.region} - {foodData.state}</p> */}
           </div>
         }
-        <Map />
+        <Map onStateClick={onStateClick} />
       </div>
     </main>
   );
