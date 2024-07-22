@@ -34,7 +34,7 @@ const Tooltip = (props: Props) => {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {isTooltipVisible && (
+      {isTooltipVisible && !!props.content && (
         <div
           ref={tooltipRef}
           className={`fixed p-3.5 bg-black text-white rounded-lg shadow text-sm font-semibold max-w-md}`}

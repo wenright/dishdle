@@ -11,6 +11,10 @@ const Map = (props: MapProps) => {
     props.setHoveredState(geo.NAME);
   };
 
+  const handleExit = (geo: any) => () => {
+    props.setHoveredState('');
+  };
+
   return (
     <div className="">
       <ComposableMap
@@ -26,6 +30,7 @@ const Map = (props: MapProps) => {
               <Geography key={geo.rsmKey} geography={geo}
                 onClick={() => props.onStateClick(geo.properties)}
                 onMouseEnter={handleHover(geo.properties)}
+                onMouseLeave={handleExit(geo.properties)}
                 className="cursor-pointer"
                 style={{
                   default: {
