@@ -1,13 +1,14 @@
 import states from "../../public/data/gz_2010_us_040_00_20m.json";
 import { ComposableMap, Geographies, Geography, GeographyProps } from "react-simple-maps"
 
-const Map = (props: { onStateClick: (geo: GeographyProps) => void }) => {
-  const handleHover = (geo: GeographyProps) => () => {
+interface MapProps {
+  onStateClick: (geo: GeographyProps) => void,
+  setHoveredState: (state: string) => void
+}
 
-  };
-
-  const handleExit = (geo: GeographyProps) => () => {
-    
+const Map = (props: MapProps) => {
+  const handleHover = (geo: any) => () => {
+    props.setHoveredState(geo.NAME);
   };
 
   return (
@@ -25,7 +26,6 @@ const Map = (props: { onStateClick: (geo: GeographyProps) => void }) => {
               <Geography key={geo.rsmKey} geography={geo}
                 onClick={() => props.onStateClick(geo.properties)}
                 onMouseEnter={handleHover(geo.properties)}
-                onMouseLeave={handleExit(geo.properties)}
                 className="cursor-pointer"
                 style={{
                   default: {

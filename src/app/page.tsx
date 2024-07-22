@@ -2,12 +2,14 @@
 
 import { dsvFormat, DSVRowString } from "d3-dsv";
 import { useEffect, useState } from "react";
+import { GeographyProps } from "react-simple-maps";
 
 import Map from "@/components/map";
-import { GeographyProps } from "react-simple-maps";
+import Tooltip from "@/components/tooltip";
 
 export default function Home() {
   const [foodData, setFoodData] = useState<DSVRowString>();
+  const [hoveredState, setHoveredState] = useState('');
 
   useEffect(() => {
     fetch('data/data.csv').then((fileData) => {
@@ -36,7 +38,9 @@ export default function Home() {
             {/* <p>{foodData.region} - {foodData.state}</p> */}
           </div>
         }
-        <Map onStateClick={onStateClick} />
+        <Tooltip content={hoveredState} child={
+          <Map onStateClick={onStateClick} setHoveredState={setHoveredState} />
+        } />
       </div>
     </main>
   );
