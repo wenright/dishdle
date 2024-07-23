@@ -1,20 +1,14 @@
 import states from "../../public/data/gz_2010_us_040_00_20m.json";
 import { ComposableMap, Geographies, Geography, GeographyProps } from "react-simple-maps"
+import State from "./state";
 
 interface MapProps {
-  onStateClick: (geo: GeographyProps) => void,
   setHoveredState: (state: string) => void
+  makeGuess: (isCorrect: boolean) => void
+  correctStates: Array<string>
 }
 
-const Map = (props: MapProps) => {
-  const handleHover = (geo: any) => () => {
-    props.setHoveredState(geo.NAME);
-  };
-
-  const handleExit = (geo: any) => () => {
-    props.setHoveredState('');
-  };
-
+const Map = ({setHoveredState, correctStates, makeGuess}: MapProps) => {  
   return (
     <div className="">
       <ComposableMap
@@ -27,25 +21,7 @@ const Map = (props: MapProps) => {
         <Geographies geography={states}>
           {({ geographies }: { geographies: any}) =>
             geographies.map((geo: any) => (
-              <Geography key={geo.rsmKey} geography={geo}
-                onClick={() => props.onStateClick(geo.properties)}
-                onMouseEnter={handleHover(geo.properties)}
-                onMouseLeave={handleExit(geo.properties)}
-                className="cursor-pointer"
-                style={{
-                  default: {
-                    fill: "#1f5673",
-                    stroke: "#759fbc"
-                  },
-                  hover: {
-                    fill: "#759fbc",
-                    stroke: "#759fbc"
-                  },
-                  pressed: {
-                    fill: "#90c3c8",
-                    stroke: "#1f5673"
-                  },
-                }} />
+              <State key={geo.rsmKey} geo={geo} setHoveredState={setHoveredState} correctStates={correctStates} makeGuess={makeGuess} />
             ))
           }
         </Geographies>
