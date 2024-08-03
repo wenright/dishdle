@@ -1,5 +1,8 @@
 import { Geography, GeographyProps } from "react-simple-maps"
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+import stateNameToAbbreviation from "@/app/stateNameToAbbreviation";
+import getDistance, { adjacencyList } from "@/app/stateSearch";
 
 const DEFAULT_COLOR = "#fdfffc";
 const CORRECT_COLOR = "#41ead4";
@@ -11,17 +14,24 @@ interface StateProps {
   setHoveredState: (state: string) => void
   makeGuess: (isCorrect: boolean) => void
   correctStates: Array<string>
+  stateAdjacencyList: adjacencyList | undefined
 }
 
-const State = ({ geo, setHoveredState, correctStates, makeGuess }: StateProps) => {
+const State = ({ geo, setHoveredState, correctStates, makeGuess, stateAdjacencyList }: StateProps) => {
   const [isSelected, setIsSelected] = useState(false);
   const [fill, setFill] = useState(DEFAULT_COLOR);
+  const [distance, setDistance] = useState<number>();
   
   const handleClick = (geo: any) => () => {
     console.log(geo);
     
     if (isSelected) {
       console.log('Tried to select the same state twice');
+      return;
+    }
+
+    if (!stateAdjacencyList) {
+      console.error('Tried to search before state adjacency list loaded');
       return;
     }
     
@@ -33,6 +43,21 @@ const State = ({ geo, setHoveredState, correctStates, makeGuess }: StateProps) =
       setFill(CORRECT_COLOR);
     } else {
       setFill(INCORRECT_COLOR);
+
+      let minDepth = Infinity;
+      let minState = '';
+      for (const state of correctStates) {
+        const guessAbbreviation = stateNameToAbbreviation(geo.NAME);
+        const corrrectAbbreviation = stateNameToAbbreviation(state);
+        console.log(stateAdjacencyList);
+        const depth = getDistance(stateAdjacencyList, guessAbbreviation, corrrectAbbreviation);
+        if (depth < minDepth) {
+          minDepth = depth;
+          minState = state;
+        }
+      }
+
+      setDistance(minDepth);
     }
 
     makeGuess(isCorrect);
@@ -63,6 +88,7 @@ const State = ({ geo, setHoveredState, correctStates, makeGuess }: StateProps) =
         className="cursor-pointer"
         fill={fill}
         stroke="#011627" />
+      <p>{distance}</p>
     </>
   );
 }

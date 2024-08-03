@@ -1,14 +1,17 @@
 import states from "../../public/data/gz_2010_us_040_00_20m.json";
 import { ComposableMap, Geographies, Geography, GeographyProps } from "react-simple-maps"
 import State from "./state";
+import { adjacencyList } from "@/app/stateSearch";
+import { StateAdjecencyList } from "@/providers/StateSearch";
 
 interface MapProps {
   setHoveredState: (state: string) => void
   makeGuess: (isCorrect: boolean) => void
   correctStates: Array<string>
+  stateAdjacencyList: adjacencyList | undefined
 }
 
-const Map = ({setHoveredState, correctStates, makeGuess}: MapProps) => {  
+const Map = ({ setHoveredState, correctStates, makeGuess, stateAdjacencyList }: MapProps) => {  
   return (
     <div className="">
       <ComposableMap
@@ -21,7 +24,7 @@ const Map = ({setHoveredState, correctStates, makeGuess}: MapProps) => {
         <Geographies geography={states}>
           {({ geographies }: { geographies: any}) =>
             geographies.map((geo: any) => (
-              <State key={geo.rsmKey} geo={geo} setHoveredState={setHoveredState} correctStates={correctStates} makeGuess={makeGuess} />
+              <State key={geo.rsmKey} geo={geo} setHoveredState={setHoveredState} correctStates={correctStates} makeGuess={makeGuess} stateAdjacencyList={stateAdjacencyList} />
             ))
           }
         </Geographies>

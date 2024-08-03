@@ -1,17 +1,19 @@
 'use client';
 
-import { dsvFormat, DSVRowString } from "d3-dsv";
+import { csvParse, dsvFormat, DSVRowString } from "d3-dsv";
 import { useEffect, useState } from "react";
-import { GeographyProps } from "react-simple-maps";
+import { GeographyProps, Line } from "react-simple-maps";
 
 import Map from "@/components/map";
 import Tooltip from "@/components/tooltip";
+import { adjacencyList } from "./stateSearch";
 
 export default function Home() {
   const [foodData, setFoodData] = useState<DSVRowString>();
   const [correctStates, setCorrectStates] = useState<Array<string>>([]);
   const [hoveredState, setHoveredState] = useState('');
   const [numGuesses, setNumGuesses] = useState(0);
+  const [stateAdjacencyList, setStateAdjacencyList] = useState<adjacencyList>();
 
   useEffect(() => {
     fetch('data/data.csv').then((fileData) => {
@@ -21,6 +23,26 @@ export default function Home() {
         setFoodData(data[index]);
 
         setCorrectStates(data[index]?.state.split(',') ?? []);
+      });
+    });
+
+    // Load state adjacency list
+    fetch('data/states.csv').then((fileData) => {
+      fileData.text().then((text) => {
+        const data = text.split('\n');
+        const map: adjacencyList = {};
+
+        for (let i = 0; i < data.length; i++) {
+          const row = data[i].split(',');
+          const linkedStates = [];
+          for (let j = 1; j < row.length; j++) {
+            linkedStates.push(row[j]);
+          }
+
+          map[row[0]] = linkedStates;
+        }
+
+        setStateAdjacencyList(map);
       });
     });
   }, []);
@@ -47,7 +69,7 @@ export default function Home() {
           </div>
         }
         <Tooltip content={hoveredState} child={
-          <Map setHoveredState={setHoveredState} correctStates={correctStates} makeGuess={makeGuess} />
+          <Map setHoveredState={setHoveredState} correctStates={correctStates} makeGuess={makeGuess} stateAdjacencyList={stateAdjacencyList} />
         } />
         <div>
           guesses: {numGuesses}
