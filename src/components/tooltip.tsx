@@ -11,7 +11,7 @@ const Tooltip = (props: Props) => {
   const [isTooltipVisible, setTooltipVisible] = useState(true);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
 
-  const tooltipRef = useRef<HTMLDivElement>();
+  const tooltipRef = useRef<HTMLDivElement|null>(null);
 
   const handleMouseMove = (event: React.MouseEvent) => {
     const { clientX, clientY } = event;
