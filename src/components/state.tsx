@@ -1,13 +1,14 @@
-import { Geography, GeographyProps } from "react-simple-maps"
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { Geography, Marker } from "react-simple-maps"
+import { geoCentroid } from "d3-geo";
 
 import stateNameToAbbreviation from "@/app/stateNameToAbbreviation";
 import getDistance, { adjacencyList } from "@/app/stateSearch";
 
-const DEFAULT_COLOR = "#fdfffc";
-const CORRECT_COLOR = "#41ead4";
-const INCORRECT_COLOR = "#ff0022";
-const HIGHLIGHTED_COLOR = "#A5ADA2";
+const DEFAULT_COLOR = "#ab947a";
+const HIGHLIGHTED_COLOR = "#9babb2";
+const CORRECT_COLOR = "#1ebc73";
+const INCORRECT_COLORs = ["#fbff86", "#f68181", "#b33831"];
 
 interface StateProps {
   geo: any
@@ -42,14 +43,12 @@ const State = ({ geo, setHoveredState, correctStates, makeGuess, stateAdjacencyL
     if (isCorrect) {
       setFill(CORRECT_COLOR);
     } else {
-      setFill(INCORRECT_COLOR);
-
       let minDepth = Infinity;
       let minState = '';
       for (const state of correctStates) {
         const guessAbbreviation = stateNameToAbbreviation(geo.NAME);
         const corrrectAbbreviation = stateNameToAbbreviation(state);
-        console.log(stateAdjacencyList);
+
         const depth = getDistance(stateAdjacencyList, guessAbbreviation, corrrectAbbreviation);
         if (depth < minDepth) {
           minDepth = depth;
@@ -58,9 +57,16 @@ const State = ({ geo, setHoveredState, correctStates, makeGuess, stateAdjacencyL
       }
 
       setDistance(minDepth);
+      let colorIndex = Math.min(minDepth, INCORRECT_COLORs.length);
+      setFill(INCORRECT_COLORs[colorIndex - 1]);
+
+      console.log(colorIndex);
     }
 
     makeGuess(isCorrect);
+    
+    console.log(correctStates);
+    console.log(geo.NAME);
   };
   
   const handleHover = (geo: any) => () => {
@@ -78,18 +84,26 @@ const State = ({ geo, setHoveredState, correctStates, makeGuess, stateAdjacencyL
     
     setHoveredState('');
   };
+
+  // TODO fix bug in react-simple-maps
+  // const centroid = geoCentroid(geo);
   
   return (
-    <>
-      <Geography key={geo.rsmKey} geography={geo}
+    <g key={geo.rsmKey}>
+      <Geography geography={geo}
         onMouseDown={handleClick(geo.properties)}
         onMouseEnter={handleHover(geo.properties)}
         onMouseLeave={handleExit(geo.properties)}
         className="cursor-pointer"
         fill={fill}
         stroke="#011627" />
-      <p>{distance}</p>
-    </>
+      {/* TODO a bug in react-simple-maps prevents this from working */}
+      {/* <Marker coordinates={centroid} fill="#777">
+        <text textAnchor="middle" fill="#F53">
+          {distance}
+        </text>
+      </Marker> */}
+    </g>
   );
 }
 

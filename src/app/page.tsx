@@ -1,8 +1,7 @@
 'use client';
 
-import { csvParse, dsvFormat, DSVRowString } from "d3-dsv";
+import { dsvFormat, DSVRowString } from "d3-dsv";
 import { useEffect, useState } from "react";
-import { GeographyProps, Line } from "react-simple-maps";
 
 import Map from "@/components/map";
 import Tooltip from "@/components/tooltip";
@@ -14,6 +13,7 @@ export default function Home() {
   const [hoveredState, setHoveredState] = useState('');
   const [numGuesses, setNumGuesses] = useState(0);
   const [stateAdjacencyList, setStateAdjacencyList] = useState<adjacencyList>();
+  const [hasGuessedCorrectly, setHasGuessedCorrectly] = useState(false);
 
   useEffect(() => {
     fetch('data/data.csv').then((fileData) => {
@@ -49,10 +49,12 @@ export default function Home() {
 
   const makeGuess = (isCorrect: boolean) => {
     setNumGuesses(currentNum => currentNum+1);
+
+    setHasGuessedCorrectly(isCorrect);
   }
   
   return (
-    <main className="flex flex-col items-center justify-between min-h-screen p-24" style={{backgroundColor: '#011627'}}>
+    <main className="flex flex-col items-center justify-between min-h-screen p-24" style={{ backgroundColor: '#313638'}}>
       <div>
         {foodData &&
           <div className="flex flex-col justify-center text-center">
@@ -60,7 +62,6 @@ export default function Home() {
             <div className="flex flex-row">
               <div className="w-1/2 m-8">
                 <p className="my-4 text-lg text-left">{foodData.description}</p>
-                {/* <p>{foodData.region} - {foodData.state}</p> */}
               </div>
               <div className="flex content-center justify-center w-1/2 m-8">
                 <img src={"food/" + foodData.image} alt="" className="object-contain" />
@@ -71,9 +72,11 @@ export default function Home() {
         <Tooltip content={hoveredState} child={
           <Map setHoveredState={setHoveredState} correctStates={correctStates} makeGuess={makeGuess} stateAdjacencyList={stateAdjacencyList} />
         } />
-        <div>
-          guesses: {numGuesses}
-        </div>
+        {hasGuessedCorrectly &&
+          <div className="fixed bg-[#c7dcd0] h-16 flex content-center justify-center items-center bottom-0 left-0 right-0">
+            <button className="border-2 border-[#2e222f] rounded text-[#313638] hover:bg-[#2e222f] hover:text-[#c7dcd0] w-24 h-8" onClick={() => window.location.reload()}>Play again</button>
+          </div>
+        }
       </div>
     </main>
   );
