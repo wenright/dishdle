@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Geography, Marker } from "react-simple-maps"
-import { geoCentroid } from "d3-geo";
+// import { geoCentroid } from "d3-geo";
 
 import stateNameToAbbreviation from "@/app/stateNameToAbbreviation";
 import getDistance, { adjacencyList } from "@/app/stateSearch";
