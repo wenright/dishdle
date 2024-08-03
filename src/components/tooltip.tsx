@@ -1,6 +1,6 @@
 // https://medium.com/@rkprasad.info/how-to-creating-a-cursor-anchored-tooltip-in-react-js-83593c5d17d2
 
-import React, { useState, useRef, ReactNode } from "react";
+import React, { useState, useRef, ReactNode, useEffect } from "react";
 
 interface Props {
   content: string,
@@ -11,7 +11,7 @@ const Tooltip = (props: Props) => {
   const [isTooltipVisible, setTooltipVisible] = useState(true);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
 
-  const tooltipRef = useRef<HTMLDivElement>(document.createElement('div'));
+  const tooltipRef = useRef<HTMLDivElement>();
 
   const handleMouseMove = (event: React.MouseEvent) => {
     const { clientX, clientY } = event;
@@ -26,6 +26,10 @@ const Tooltip = (props: Props) => {
   const handleMouseLeave = () => {
     setTooltipVisible(false);
   };
+
+  useEffect(() => {
+    tooltipRef.current = document.createElement('div');
+  }, []);
 
   return (
     <div
