@@ -2,6 +2,7 @@
 
 import { dsvFormat, DSVRowString } from "d3-dsv";
 import { useEffect, useState } from "react";
+import Image from 'next/image';
 
 import Map from "@/components/map";
 import Tooltip from "@/components/tooltip";
@@ -54,17 +55,17 @@ export default function Home() {
   }
   
   return (
-    <main className="flex flex-col items-center justify-between min-h-screen p-24" style={{ backgroundColor: '#313638'}}>
+    <main className="flex flex-col items-center justify-between min-h-screen md:p-24" style={{ backgroundColor: '#313638'}}>
       <div>
         {foodData &&
           <div className="flex flex-col justify-center text-center">
-            <p className="mb-4 text-4xl">{foodData.name}</p>
-            <div className="flex flex-row">
-              <div className="w-1/2 m-8">
-                <p className="my-4 text-lg text-left">{foodData.description}</p>
+            <p className="mb-12 mt-8 md:mb-4 text-4xl">{foodData.name}</p>
+            <div className="flex flex-col-reverse md:flex-row items-center">
+              <div className="md:w-1/2 m-2 md:m-8">
+                <p className="my-4 text-lg align-center md:text-left">{foodData.description}</p>
               </div>
-              <div className="flex content-center justify-center w-1/2 m-8">
-                <img src={"food/" + foodData.image} alt="" className="object-contain" />
+              <div className="flex content-center justify-center md:w-1/2 m-2 md:m-8">
+                <Image src={"/food/" + foodData.image} alt="" className="object-contain" width={300} height={300} />
               </div>
             </div>
           </div>
