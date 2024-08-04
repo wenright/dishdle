@@ -55,7 +55,7 @@ export default function Home() {
   }
   
   return (
-    <main className="flex flex-col items-center justify-between min-h-screen md:p-24" style={{ backgroundColor: '#313638'}}>
+    <main className="flex flex-col items-center justify-between min-h-screen md:p-24 text-white" style={{ backgroundColor: '#313638'}}>
       <div>
         {foodData &&
           <div className="flex flex-col justify-center text-center">
